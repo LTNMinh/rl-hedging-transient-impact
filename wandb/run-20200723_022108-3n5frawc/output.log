@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "main.py", line 49, in <module>
+    name_cases='Option Hedging'
+  File "/content/rl-hedging-transient-impact/agent.py", line 130, in __init__
+    sigma=ou_noise_sigma,
+  File "/content/rl-hedging-transient-impact/agent.py", line 64, in __init__
+    self.reset()
+  File "/content/rl-hedging-transient-impact/agent.py", line 68, in reset
+    self.state = copy.copy(self.mu)
+NameError: name 'copy' is not defined

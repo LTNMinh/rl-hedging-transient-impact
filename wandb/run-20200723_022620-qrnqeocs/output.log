@@ -1,0 +1,14 @@
+cpu
+Populate Replay Buffer... 
+Traceback (most recent call last):
+  File "main.py", line 49, in <module>
+    name_cases='Option Hedging'
+  File "/content/rl-hedging-transient-impact/agent.py", line 170, in __init__
+    self.populate(self.initial_random_steps)
+  File "/content/rl-hedging-transient-impact/agent.py", line 194, in populate
+    noise = self.noise.sample()
+  File "/content/rl-hedging-transient-impact/agent.py", line 84, in sample
+    [random.random() for _ in range(len(x))]
+  File "/content/rl-hedging-transient-impact/agent.py", line 84, in <listcomp>
+    [random.random() for _ in range(len(x))]
+NameError: name 'random' is not defined

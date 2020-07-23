@@ -1,0 +1,10 @@
+cpu
+Populate Replay Buffer... 
+    1/10000 [....................] - ETA: 10sTraceback (most recent call last):
+  File "main.py", line 49, in <module>
+    name_cases='Option Hedging'
+  File "/content/rl-hedging-transient-impact/agent.py", line 171, in __init__
+    self.populate(self.initial_random_steps)
+  File "/content/rl-hedging-transient-impact/agent.py", line 204, in populate
+    state = env.reset()
+NameError: name 'env' is not defined
