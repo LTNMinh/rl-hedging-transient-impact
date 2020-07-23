@@ -34,7 +34,7 @@ if __name__ == '__main__':
     batch_size = 256
     ou_noise_theta = 1.0
     ou_noise_sigma = 0.05
-    initial_random_steps = 10000
+    initial_random_episode = 100
 
     agent = DDPGHedgingAgent(
         env, 
@@ -42,7 +42,7 @@ if __name__ == '__main__':
         batch_size,
         ou_noise_theta,
         ou_noise_sigma,
-        initial_random_steps=initial_random_steps,
+        initial_random_steps=initial_random_episode,
         tau = 0.2,
         gamma = 0.99,
         name_cases='Option Hedging'
