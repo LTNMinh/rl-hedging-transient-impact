@@ -1,0 +1,26 @@
+{
+    "root": "/content/rl-hedging-transient-impact",
+    "program": "main.py",
+    "git": {
+        "remote": "https://e9b696105f4596cb0c473e9ca42315d6a92b200f@github.com/LTNMinh/rl-hedging-transient-impact",
+        "commit": "5f93162273eda37db8355bc52b2aaf303aa9349f"
+    },
+    "email": "ltnminh1993@gmail.com",
+    "startedAt": "2020-07-23T08:29:28.802102",
+    "host": "8f8ddeaa081a",
+    "username": "root",
+    "executable": "/usr/bin/python3",
+    "os": "Linux-4.19.104+-x86_64-with-Ubuntu-18.04-bionic",
+    "python": "3.6.9",
+    "gpu": "Tesla K80",
+    "gpu_count": 1,
+    "cpu_count": 2,
+    "cuda": "10.1.243",
+    "args": [],
+    "state": "failed",
+    "jobType": null,
+    "mode": "dryrun",
+    "project": "Option Hedging",
+    "heartbeatAt": "2020-07-23T08:29:32.588758",
+    "exitcode": 1
+}

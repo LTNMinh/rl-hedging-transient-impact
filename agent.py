@@ -35,7 +35,7 @@ class ReplayBuffer:
     """
 
     def __init__(self, capacity: int) -> None: 
-        self.buffer = collections.deque(maxlen = capacity)
+        self.buffer    = collections.deque(maxlen = capacity)
         self.scaler = StandardScaler()
     
     def __len__(self) -> None:
@@ -44,10 +44,10 @@ class ReplayBuffer:
     def append(self,experience: Experience) -> None:
         self.buffer.append(experience)
     
-    def standar_scaler(self) -> None: 
-        states,actions,rewards,next_states,dones = zip(*self.buffer) 
-        self.scaler.fit_transform(states) 
-        return self.scaler 
+    # def standar_scaler(self) -> None: 
+    #     states,actions,rewards,next_states,dones = zip(*self.buffer) 
+    #     self.scaler.fit_transform(states) 
+    #     return self.scaler 
 
     def sample(self,batch_size: int,device: str = 'cpu') -> Tuple:
         indices = np.random.choice(len(self.buffer),batch_size,replace = False)
@@ -102,7 +102,7 @@ class DDPGHedgingAgent:
         batch_size (int): batch size for sampling
         gamma (float): discount factor
         tau (float): parameter for soft target update
-        initial_random_steps (int): initial random action steps
+        initial_random_episode (int): initial random action steps
         noise (OUNoise): noise generator for exploration
         device (torch.device): cpu / gpu
         transition (list): temporory storage for the recent transition
@@ -117,7 +117,7 @@ class DDPGHedgingAgent:
                     ou_noise_sigma: float,
                     gamma: float = 0.99,
                     tau: float = 5e-3,
-                    initial_random_steps: int = 1e4,
+                    initial_random_episode: int = 1e4,
                     name_cases = 'myproject'):
         """ Initialize. """
         
@@ -132,7 +132,7 @@ class DDPGHedgingAgent:
         self.batch_size = batch_size
         self.gamma = gamma
         self.tau = tau
-        self.initial_random_steps = initial_random_steps
+        self.initial_random_episode = initial_random_episode
                 
         # noise
         self.noise = OUNoise(
@@ -168,12 +168,12 @@ class DDPGHedgingAgent:
         self.total_step = 0
         # mode: train / test
         self.is_test = False
-        self.populate(self.initial_random_steps)
+        self.populate(self.initial_random_episode)
     
         
         
     
-    def populate(self, steps: int = 10000) -> None:
+    def populate(self, eps: int = 100) -> None:
         """
         Carries out several random steps through the environment to initially fill
         up the replay buffer with experiences
@@ -184,28 +184,29 @@ class DDPGHedgingAgent:
         
         if not self.is_test:
             print("Populate Replay Buffer... ")
-            kbar       = pkbar.Kbar(target=steps, width=20)
+            kbar       = pkbar.Kbar(target=eps, width=20)
             state = self.env.reset()
             
-            
-            for i in range(steps):
-                # Get action from sample space 
-                selected_action = self.env.action_space.sample()
-                # selected_action = 0 
-                noise = self.noise.sample()
-                selected_action = np.clip(selected_action + noise, -1.0, 1.0)
-                
-                next_state, reward, done, _ = self.env.step(selected_action)
-                self.transition = [state, selected_action ,reward, next_state, int(done)]
-                self.memory.append(Experience(*self.transition))
-                
-                state = next_state
-                if done:         
-                    state = self.env.reset()
+            for i in range(eps):
+                while True: 
+                    # Get action from sample space 
+                    selected_action = self.env.action_space.sample()
+                    # selected_action = 0 
+                    noise = self.noise.sample()
+                    selected_action = np.clip(selected_action + noise, -1.0, 1.0)
+                    
+                    next_state, reward, done, _ = self.env.step(selected_action)
+                    self.transition = [state, selected_action ,reward, next_state, int(done)]
+                    self.memory.append(Experience(*self.transition))
+                    
+                    state = next_state
+                    if done:         
+                        state = self.env.reset()
+                        break 
                 
                 kbar.add(1)
 
-            self.scaler = self.memory.standar_scaler()
+            # self.scaler = self.memory.standar_scaler()
                 
     @torch.no_grad()
     def select_action(self, state: np.ndarray) -> np.ndarray:

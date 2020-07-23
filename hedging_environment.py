@@ -55,14 +55,10 @@ class OptionHedgingEnv(gym.Env):
             Random init condition on BS model
         """
         ################## Init Parameters ################
-        # Random params 
         #TODO: Random
-        # self.mu    =  np.random.uniform(-0.1,0.1,1)[0] 
-        # self.sigma    =  self.mu * 3 
-        # self.sigma =  np.random.uniform(0,1,1)[0] 
+        # Fix params 
         self.sigma = 0.3 
         self.mu = 0.1
-        # Fix params 
         self.maturity = 1.0
         self.time_step = 252 
         self.dt = 1.0 / self.time_step
@@ -75,28 +71,14 @@ class OptionHedgingEnv(gym.Env):
         self.seed()
 
         start_quantity  = 0 
-        # self.start_price = 5
         start_price     = 100
         self.strike_price = start_price
-        # prices = []
-        # for i in range(self.time_step):
-        #     current_price  = start_price +\
-        #                     self.mu  * start_price * self.dt +\
-        #                     self.sigma * start_price * np.sqrt(self.dt) * np.random.randn()
-        #     start_price = current_price
-        #     prices.append(current_price)
 
-
-        # self.strike_price =  prices[-1]  
-        
-        # prices.extend([self.strike_price,0,self.maturity])
-        # self.state = np.array(prices)
-        # self.last_price = start_price
-        self.value_change = [] 
-        self.state = np.array([
-                                start_price,
+        self.portfolio_value = np.zeros(252)
+        self.state = np.array([start_price,
                                 0,
                                 self.maturity,])
+        self.time_step = 0
 
         return self.state
         
@@ -111,34 +93,30 @@ class OptionHedgingEnv(gym.Env):
         except: 
             action = action
         
-        # price_path     = self.state[:-3].tolist()
         price_path     = self.state[0]
         last_holding   = self.state[-2]
         time_to_mature = self.state[-1]
 
         # Update Price as Brownian Motion
-
-
-        last_price = price_path
-        # last_price = self.last_price
+        last_price     = price_path
         current_price  = last_price +\
                             self.mu  * last_price * self.dt +\
                             self.sigma * last_price * np.sqrt(self.dt) * np.random.randn()
         
-        # price_path.pop(0)
-        # price_path.append(current_price)
-
-
-        
         adjust_holding = last_holding + action
 
-        return_ = current_price / last_price - 1 
-        value_change = last_holding * return_
-        self.value_change.append(value_change)
+        self.portfolio_value[self.time_step] = adjust_holding * current_price
+        # return_ = current_price / last_price - 1 
+        # value_change = last_holding * return_
+        # self.value_change.append(value_change)
 
-        if max(self.dt,self.maturity) != self.dt:
-            self.maturity += - self.dt 
+        if self.time_step + 1 != 252: 
+        # if max(self.dt,self.maturity) != self.dt:
+            self.maturity +=  -self.dt 
             done   = False
+            self.time_step +=  1 
+            print(self.maturity,self.time_step)
+            reward = adjust_holding * (current_price - last_price)
         else: 
             last_price = current_price
             current_price  = last_price +\
@@ -147,12 +125,13 @@ class OptionHedgingEnv(gym.Env):
         
             # price_path.pop(0)
             # price_path.append(current_price)
-            return_ = current_price / last_price - 1 
-
-            value_change  +=  adjust_holding * return_ 
-            self.value_change.append(adjust_holding * return_ )
-            value_change  +=  max(current_price - self.strike_price , 0) 
-            self.value_change.append(max(current_price - self.strike_price , 0) )
+            # return_ = current_price / last_price - 1 
+            print(self.maturity,self.time_step)
+            reward = 0
+            # value_change  +=  adjust_holding * return_ 
+            # self.value_change.append(adjust_holding * return_ )
+            # value_change  +=  max(current_price - self.strike_price , 0) 
+            # self.value_change.append(max(current_price - self.strike_price , 0) )
             # reward  =  -abs( value_change -  max(current_price - self.strike_price , 0))
 
             adjust_holding = 0 
@@ -160,7 +139,7 @@ class OptionHedgingEnv(gym.Env):
             done           = True
 
         # reward = value_change - 0.2 * value_change ** 2
-        reward =  value_change - 0.5* (value_change - np.mean(self.value_change) ) ** 2 
+        # reward =  value_change - 0.5* (value_change - np.mean(self.value_change) ) ** 2 
         # price_path.extend([self.strike_price,adjust_holding,self.maturity])
         # self.state = np.array(price_path)
         # self.last_price = current_price
