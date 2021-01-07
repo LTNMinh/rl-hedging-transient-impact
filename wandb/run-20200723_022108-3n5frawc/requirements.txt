@@ -179,7 +179,7 @@ llvmlite==0.31.0
 lmdb==0.98
 lucid==0.3.8
 lunarcalendar==0.0.9
-lxml==4.2.6
+lxml==4.6.2
 markdown==3.2.2
 markupsafe==1.1.1
 matplotlib-venn==0.11.5
