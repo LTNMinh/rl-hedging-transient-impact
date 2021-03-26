@@ -284,7 +284,7 @@ python-slugify==4.0.1
 python-utils==2.4.0
 pytz==2018.9
 pywavelets==1.1.1
-pyyaml==3.13
+pyyaml==5.4
 pyzmq==19.0.1
 qtconsole==4.7.5
 qtpy==1.9.0
