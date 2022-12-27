@@ -306,7 +306,7 @@ seaborn==0.10.1
 send2trash==1.5.0
 sentry-sdk==0.16.2
 setuptools-git==1.2
-setuptools==49.1.0
+setuptools==65.5.1
 shapely==1.7.0
 shortuuid==1.0.1
 simplegeneric==0.8.1
